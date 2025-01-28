@@ -4,7 +4,7 @@
 ### Équipe du projet
 - GHRIB Yacine
 - BORRY Lenny
-- VEAUBIGOT Damiens
+- VEAU-BIGOT Damien
 - LEPINE Francois
 
 
