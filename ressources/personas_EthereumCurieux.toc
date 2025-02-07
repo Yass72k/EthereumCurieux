@@ -6,4 +6,3 @@
 \contentsline {subsection}{\numberline {2.2}Persona - TYPE 2}{3}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Persona - TYPE 3}{4}{subsection.2.3}%
 \contentsline {subsection}{\numberline {2.4}Persona - TYPE 4}{4}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Persona - TYPE 5}{4}{subsection.2.5}%
