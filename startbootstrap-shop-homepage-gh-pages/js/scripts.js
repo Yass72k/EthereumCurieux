@@ -33,3 +33,31 @@ function startPriceUpdates() {
 }
 
 document.addEventListener("DOMContentLoaded", startPriceUpdates);
+
+// Modification dans scripts.js
+
+// Fonction pour récupérer le paramètre d'URL
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+// Fonction pour charger la crypto choisie en priorité
+async function loadSelectedCrypto() {
+    const cryptoId = getQueryParam("crypto") || "bitcoin"; // Par défaut : Bitcoin
+    
+    try {
+        const response = await fetch(`https://api.coincap.io/v2/assets/${cryptoId}`);
+        const data = await response.json();
+        if (data.data) {
+            document.getElementById("crypto-name").innerText = data.data.name;
+            document.getElementById("crypto-price").innerText = `$${parseFloat(data.data.priceUsd).toFixed(2)}`;
+            document.getElementById("crypto-image").src = `assets/${data.data.id}.png`;
+        }
+    } catch (error) {
+        console.error("Erreur lors du chargement des données de la crypto :", error);
+    }
+}
+
+// Charger la crypto choisie au chargement de la page
+document.addEventListener("DOMContentLoaded", loadSelectedCrypto);
