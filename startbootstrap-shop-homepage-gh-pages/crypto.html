@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Ethereum Curieux</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/photo.jpeg" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Header-->
+        <header class="bg-custom py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Ethereum Curieux</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">Le site des cryptos préféré de ton site des cryptos préféré</p>
+                </div>
+            </div>
+        </header> 
+
+        <h1 id="crypto-name">Chargement...</h1>
+        <p id="crypto-price"></p>
+    
+        <script>
+            // Fonction pour récupérer le paramètre de l'URL
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+    
+            // Récupérer la crypto sélectionnée
+            const cryptoId = getQueryParam("crypto");
+    
+            if (cryptoId) {
+                document.getElementById("crypto-name").textContent = cryptoId.toUpperCase();
+    
+                // Appel à l'API CoinCap pour récupérer le prix
+                fetch(`https://api.coincap.io/v2/assets/${cryptoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const price = data.data.priceUsd;
+                        document.getElementById("crypto-price").textContent = `Prix actuel : $${parseFloat(price).toFixed(2)}`;
+                    })
+                    .catch(error => console.error("Erreur API :", error));
+            } else {
+                document.getElementById("crypto-name").textContent = "Aucune crypto sélectionnée";
+            }
+        </script>
+    
+
+
+
+
+        <!-- Footer-->
+        <footer class="bg-custom py-5">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Ethereum Curieux 2025</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

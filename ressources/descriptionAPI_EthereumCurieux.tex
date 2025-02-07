@@ -36,23 +36,33 @@
 \section{APIs Utilis\'ees}
 Dans ce projet, plusieurs APIs ont été utilisées pour fournir des informations relatives aux crypto-monnaies et aux actualités. Voici une description des APIs principales :
 
-\subsection{API pour les données des crypto-monnaies}
-Nous avons utilisé des services d'API permettant de récupérer les informations et les données en temps réel concernant les crypto-monnaies. Voici deux exemples d'API populaires :
+\subsection{API pour les donn\'ees des crypto-monnaies}
+Nous avons utilis\'e des services d'API permettant de r\'ecup\'erer les informations et les donn\'ees en temps r\'eel concernant les crypto-monnaies. Parmi les options disponibles, nous avons choisi \textbf{CoinGecko API} pour les raisons suivantes :
 
 \begin{itemize}
-    \item \textbf{CoinGecko API} : Cette API fournit des informations complètes sur les prix, les volumes, et les capitalisations des différentes crypto-monnaies. Elle permet également de récupérer les tendances actuelles et des graphiques historiques. Vous pouvez consulter la documentation sur leur site officiel : \href{https://www.coingecko.com/en/api}{CoinGecko API}.\\
-
-    \item \textbf{CoinMarketCap API} : Un service d'API très populaire qui offre des données similaires à CoinGecko, avec des fonctionnalités avancées comme des indicateurs de marché et des analyses de performance. Plus de détails sont disponibles à l'adresse suivante : \href{https://coinmarketcap.com/api/}{CoinMarketCap API}.\\
+    \item \textbf{Gratuit\'e et accessibilit\'e} : CoinGecko API offre un acc\`es plus ouvert aux donn\'ees essentielles, contrairement \`a CoinMarketCap API qui impose des restrictions plus strictes sur les appels gratuits.\
+    \item \textbf{Richesse des donn\'ees} : Elle fournit des informations d\'etaill\'ees sur plus de 13 000 crypto-monnaies, incluant les prix en temps r\'eel, la capitalisation boursi\`ere, le volume d'\'echange et des graphiques historiques.\
+    \item \textbf{Absence de cl\'e API obligatoire} : Contrairement \`a CoinMarketCap, qui exige une inscription et une cl\'e API, CoinGecko permet de r\'ecup\'erer des informations sans cl\'e API, simplifiant ainsi l’int\'egration.\
+    \item \textbf{Fiabilit\'e et popularit\'e} : Utilis\'ee par de nombreuses plateformes de trading, CoinGecko est une source de donn\'ees stable et r\'eput\'ee.
 \end{itemize}
 
-\subsection{API pour les actualités}
-Afin de fournir les dernières nouvelles en rapport avec les crypto-monnaies, nous avons utilisé des APIs pour les actualités :
+Vous pouvez consulter la documentation officielle \`a l'adresse suivante : \href{https://www.coingecko.com/en/api}{CoinGecko API}.
 
-\begin{itemize}\\
-    \item \textbf{NewsAPI} : Une API générale pour récupérer des actualités provenant de différentes sources. Elle permet de filtrer les nouvelles selon des mots-clés ou des sources précises. Consultez leur documentation ici : \href{https://newsapi.org/}{NewsAPI}.\\
+\subsection{API pour les actualit\'es}
+Pour obtenir les derni\`eres nouvelles en rapport avec les crypto-monnaies, nous avons choisi \textbf{NewsAPI}, en raison des avantages suivants :
 
-    \item \textbf{CryptoNews API} : Spécialisée dans les actualités des crypto-monnaies, cette API fournit des articles et des analyses provenant de plateformes reconnues dans le domaine. Vous pouvez consulter leur documentation sur \href{https://cryptonews-api.com/}{CryptoNews API}.\\
+\begin{itemize}
+    \item \textbf{Diversit\'e des sources} : NewsAPI agr\'ege des articles de plusieurs m\'edias reconnus, garantissant une couverture compl\`ete de l’actualit\'e crypto.\
+    \item \textbf{Flexibilit\'e des requ\^etes} : Elle permet de filtrer les articles par mot-cl\'e, source, date et langue, offrant un contr\^ole pr\'ecis sur les informations r\'ecup\'er\'ees.\
+    \item \textbf{Facilit\'e d’int\'egration} : L’API est bien document\'ee et simple \`a utiliser, permettant une int\'egration rapide.\
+    \item \textbf{Co\^ut abordable} : Un plan gratuit permet d’acc\'eder aux titres et r\'esum\'es des articles, suffisants pour nos besoins.
 \end{itemize}
+
+La documentation de NewsAPI est disponible ici : \href{https://newsapi.org/}{NewsAPI}.
+
+\subsection{Conclusion}
+Le choix de \textbf{CoinGecko API} et \textbf{NewsAPI} repose sur leur \textbf{accessibilit\'e}, \textbf{richesse en informations}, \textbf{fiabilit\'e} et \textbf{simplicit\'e d’int\'egration}. Ces APIs permettent d’obtenir des donn\'ees en temps r\'eel sur les crypto-monnaies et leurs actualit\'es, tout en optimisant les co\^uts et la facilit\'e d’utilisation.
+
 
 Ces APIs ont été choisies pour leur fiabilité et leur richesse en termes de fonctionnalités.
 
