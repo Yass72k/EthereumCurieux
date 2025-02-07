@@ -1,5 +1,6 @@
 \babel@toc {french}{}
 \contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
 \contentsline {section}{\numberline {2}APIs Utilis\'ees}{3}{section.2}%
-\contentsline {subsection}{\numberline {2.1}API pour les données des crypto-monnaies}{3}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}API pour les actualités}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.1}API pour les donn\'ees des crypto-monnaies}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}API pour les actualit\'es}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Conclusion}{3}{subsection.2.3}%
