@@ -12,6 +12,84 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
+        <style>
+            .bg-custom {
+                background-color: #20232a;
+            }
+            .card {
+                height: 100%;
+                transition: transform 0.3s;
+            }
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            }
+            .card-img-top {
+                height: 200px;
+                object-fit: contain;
+                padding: 20px;
+                background-color: #f8f9fa;
+            }
+            .price-up {
+                color: #28a745;
+            }
+            .price-down {
+                color: #dc3545;
+            }
+            #crypto-container {
+                min-height: 500px;
+            }
+            .loading-spinner {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 500px;
+            }
+            .crypto-rank {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                background-color: #343a40;
+                color: white;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+            }
+            /* Styles pour le carrousel d'actualités */
+            .news-carousel-item {
+                height: 300px;
+                background-size: cover;
+                background-position: center;
+                position: relative;
+            }
+            .news-carousel-caption {
+                background-color: rgba(0, 0, 0, 0.7);
+                bottom: 0;
+                width: 100%;
+                left: 0;
+                right: 0;
+                padding: 20px;
+            }
+            .news-date {
+                font-size: 0.8rem;
+                opacity: 0.8;
+            }
+            .carousel-control-prev, .carousel-control-next {
+                width: 5%;
+            }
+            .news-loading {
+                height: 300px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #f8f9fa;
+                color: #20232a;
+            }
+        </style>
     </head>
     <body>
         <!-- Header-->
@@ -23,243 +101,42 @@
                 </div>
             </div>
         </header>
+
+        <!-- Carrousel des actualités crypto -->
+        <div class="container mt-4">
+            <h2 class="text-center mb-4">Dernières actualités crypto</h2>
+            <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators" id="carousel-indicators">
+                    <!-- Les indicateurs seront ajoutés dynamiquement -->
+                </div>
+                <div class="carousel-inner" id="carousel-inner">
+                    <div class="carousel-item active news-loading">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Chargement des actualités...</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Précédent</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Suivant</span>
+                </button>
+            </div>
+        </div>
+
         <!-- Section-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
-                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Product image-->
-                            <img class="card-img-top" src="assets/Bitcoin.png" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">Bitcoin (BTC)</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <!-- Product price-->
-                                    <h3><span id="btc-price"></span></h3>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=bitcoin">Détails</a></div>
-                            </div>
-                        </div>
+                <div id="loading" class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Chargement...</span>
                     </div>
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Sale badge-->
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">En vedette</div>
-                            <!-- Product image-->
-                            <img class="card-img-top" src="assets/Ethereum.png" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">Ethereum (ETH)</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <!-- Product price-->
-                                    <!--<span class="text-muted text-decoration-line-through">$20.00</span>-
-                                    $18.00-->
-                                    <h3><span id="eth-price"></span></h3>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=ethereum">Détails</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Sale badge-->
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">En vedette</div>
-                            <!-- Product image-->
-                            <img class="card-img-top" src="assets/xrp.png" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">Ripple (XRP)</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <!--$25.00-->
-                                    <h3><span id="xrp-price"></span></h3>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=xrp">Détails</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Product image-->
-                            <img class="card-img-top" src="assets/theter.png" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">Tether (USDT)</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                    </div>
-                                    <!-- Product price-->
-                                    <!--$40.00-->
-                                    <h3><span id="usdt-price"></span></h3>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=tether">Détails</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Sale badge-->
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">En vedette</div>
-                            <!-- Product image-->
-                            <img class="card-img-top" src="assets/solana.jpg" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">Solana (SOL)</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star"></div>
-                                    </div>
-                                    <!-- Product price-->
-                                    <!--<span class="text-muted text-decoration-line-through">$50.00</span>
-                                    $25.00-->
-                                    <h3><span id="sol-price"></span></h3>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=solana">Détails</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Product image-->
-                            <img class="card-img-top" src="assets/bnb.png" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">Binance Coin (BNB)</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star"></div>
-                                        <div class="bi-star"></div>
-                                    </div>
-                                    <!-- Product price-->
-                                    <!--$120.00 - $280.00-->
-                                    <h3><span id="bnb-price"></span></h3>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=binance-coin">Détails</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Sale badge-->
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">En vedette</div>
-                            <!-- Product image-->
-                            <img class="card-img-top" src="assets/usdc.png" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">USD Coin (USDC)</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star"></div>
-                                        <div class="bi-star"></div>
-                                    </div>
-                                    <!-- Product price-->
-                                    <!--<span class="text-muted text-decoration-line-through">$20.00</span>
-                                    $18.00-->
-                                    <h3><span id="usdc-price"></span></h3>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=usd-coin">Détails</a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Product image-->
-                            <img class="card-img-top" src="assets/doge.png" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">Dogecoin (DOGE)</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star"></div>
-                                    </div>
-                                    <!-- Product price-->
-                                    <!--$40.00-->
-                                    <h3><span id="doge-price"></span></h3>
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=dogecoin">Détails</a></div>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                <div id="crypto-container" class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    <!-- Les cryptos seront ajoutées ici dynamiquement -->
                 </div>
             </div>
         </section>
@@ -269,7 +146,197 @@
         </footer>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
+        
+        <!-- Script pour les actualités et les cryptos -->
+        <script>
+            // Fonction pour formater le prix avec deux décimales
+            function formatPrice(price) {
+                const numPrice = parseFloat(price);
+                if (numPrice < 0.01) {
+                    return '$' + numPrice.toFixed(6);
+                } else if (numPrice < 1) {
+                    return '$' + numPrice.toFixed(4);
+                } else {
+                    return '$' + numPrice.toFixed(2);
+                }
+            }
+
+            // Fonction pour obtenir l'URL de l'image de la crypto
+            function getCryptoImageUrl(id) {
+                return `https://assets.coincap.io/assets/icons/${id.toLowerCase()}@2x.png`;
+            }
+
+            // Fonction pour créer une carte de crypto
+            function createCryptoCard(crypto, index) {
+                const featured = index < 3 ? '<div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">En vedette</div>' : '';
+                const stars = 5 - Math.floor(index / 20); // Diminuer les étoiles en fonction du rang
+                const starElements = [];
+                
+                for (let i = 0; i < 5; i++) {
+                    if (i < stars) {
+                        starElements.push('<div class="bi-star-fill"></div>');
+                    } else {
+                        starElements.push('<div class="bi-star"></div>');
+                    }
+                }
+
+                const priceChangeClass = parseFloat(crypto.changePercent24Hr) >= 0 ? 'price-up' : 'price-down';
+                const priceChangeSymbol = parseFloat(crypto.changePercent24Hr) >= 0 ? '↑' : '↓';
+                const priceChange = `<small class="${priceChangeClass}">${priceChangeSymbol} ${Math.abs(parseFloat(crypto.changePercent24Hr)).toFixed(2)}%</small>`;
+
+                return `
+                <div class="col mb-5">
+                    <div class="card h-100">
+                        ${featured}
+                        <div class="crypto-rank">${index + 1}</div>
+                        <img class="card-img-top" src="${getCryptoImageUrl(crypto.symbol)}" alt="${crypto.name}" onerror="this.src='assets/crypto-default.png';" />
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <h5 class="fw-bolder">${crypto.name} (${crypto.symbol})</h5>
+                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                    ${starElements.join('')}
+                                </div>
+                                <h3 id="${crypto.id}-price">${formatPrice(crypto.priceUsd)}</h3>
+                                <p>${priceChange}</p>
+                            </div>
+                        </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=${crypto.id}">Détails</a></div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            // Fonction pour charger les 100 premières cryptos
+            async function loadTop100Cryptos() {
+                try {
+                    const response = await fetch('https://api.coincap.io/v2/assets?limit=100');
+                    const data = await response.json();
+                    
+                    // Cacher le spinner de chargement
+                    document.getElementById('loading').style.display = 'none';
+                    
+                    // Conteneur pour les cartes crypto
+                    const container = document.getElementById('crypto-container');
+                    container.innerHTML = '';
+                    
+                    // Créer et ajouter chaque carte de crypto
+                    data.data.forEach((crypto, index) => {
+                        container.innerHTML += createCryptoCard(crypto, index);
+                    });
+
+                    // Mettre à jour les prix périodiquement
+                    setInterval(updatePrices, 60000); // Mise à jour toutes les minutes
+                } catch (error) {
+                    console.error('Erreur lors du chargement des cryptos:', error);
+                    document.getElementById('loading').innerHTML = '<div class="alert alert-danger">Erreur lors du chargement des données. Veuillez réessayer.</div>';
+                }
+            }
+
+            // Fonction pour mettre à jour les prix
+            async function updatePrices() {
+                try {
+                    const response = await fetch('https://api.coincap.io/v2/assets?limit=100');
+                    const data = await response.json();
+                    
+                    data.data.forEach(crypto => {
+                        const priceElement = document.getElementById(`${crypto.id}-price`);
+                        if (priceElement) {
+                            priceElement.textContent = formatPrice(crypto.priceUsd);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Erreur lors de la mise à jour des prix:', error);
+                }
+            }
+
+            // Fonction pour charger les actualités crypto générales
+            async function loadCryptoNews() {
+                try {
+                    // Utilisation de Gnews API au lieu de NewsAPI
+                    const apiKey = "d17cbf8a4455d94299d04b2dd49e19f7"; // Remplacez par votre clé Gnews
+                    const response = await fetch(`https://gnews.io/api/v4/search?q=cryptocurrency%20OR%20bitcoin%20OR%20ethereum&lang=fr&country=fr&max=5&apikey=${apiKey}`);
+                    const data = await response.json();
+                    
+                    // Vérifier si des articles ont été trouvés
+                    if (data.articles && data.articles.length > 0) {
+                        const carouselInner = document.getElementById('carousel-inner');
+                        const carouselIndicators = document.getElementById('carousel-indicators');
+                        
+                        // Vider le carrousel
+                        carouselInner.innerHTML = '';
+                        carouselIndicators.innerHTML = '';
+                        
+                        // Ajouter chaque article au carrousel
+                        data.articles.forEach((article, index) => {
+                            // Créer l'indicateur
+                            const indicator = document.createElement('button');
+                            indicator.setAttribute('type', 'button');
+                            indicator.setAttribute('data-bs-target', '#newsCarousel');
+                            indicator.setAttribute('data-bs-slide-to', index.toString());
+                            if (index === 0) indicator.classList.add('active');
+                            carouselIndicators.appendChild(indicator);
+                            
+                            // Créer l'élément du carrousel
+                            const carouselItem = document.createElement('div');
+                            carouselItem.classList.add('carousel-item');
+                            if (index === 0) carouselItem.classList.add('active');
+                            
+                            // Formater la date
+                            const pubDate = new Date(article.publishedAt);
+                            const formattedDate = pubDate.toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                            
+                            // Ajouter le contenu
+                            carouselItem.innerHTML = `
+                                <div class="news-carousel-item" style="background-image: url('${article.image || 'assets/news-default.jpg'}')">
+                                    <div class="news-carousel-caption">
+                                        <h5>${article.title}</h5>
+                                        <p>${article.description || 'Cliquez pour en savoir plus'}</p>
+                                        <p class="news-date">Publié le ${formattedDate}</p>
+                                        <a href="${article.url}" target="_blank" class="btn btn-primary btn-sm">Lire l'article</a>
+                                    </div>
+                                </div>
+                            `;
+                            carouselInner.appendChild(carouselItem);
+                        });
+                    } else {
+                        document.getElementById('carousel-inner').innerHTML = `
+                            <div class="carousel-item active">
+                                <div class="news-carousel-item">
+                                    <div class="news-carousel-caption">
+                                        <h5>Aucune actualité disponible</h5>
+                                        <p>Nous n'avons pas pu récupérer les dernières actualités sur les cryptomonnaies.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Erreur lors du chargement des actualités:', error);
+                    document.getElementById('carousel-inner').innerHTML = `
+                        <div class="carousel-item active">
+                            <div class="news-carousel-item">
+                                <div class="news-carousel-caption">
+                                    <h5>Erreur de chargement</h5>
+                                    <p>Une erreur s'est produite lors du chargement des actualités. Veuillez réessayer ultérieurement.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Charger les cryptos et les actualités au chargement de la page
+            document.addEventListener('DOMContentLoaded', () => {
+                loadTop100Cryptos();
+                loadCryptoNews();
+            });
+        </script>
     </body>
 </html>
