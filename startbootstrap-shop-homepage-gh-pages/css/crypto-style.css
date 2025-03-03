@@ -1,0 +1,305 @@
+/* Variables globales */
+:root {
+    --dark-purple: #2A1D62;
+    --medium-blue: #4B7DAE;
+    --light-blue: #6BDCF9;
+    --steel-blue: #4D80B2;
+    --indigo: #2F246A;
+    --navy-blue: #1F184F;
+    --dark-blue: #0F0B33;
+    --royal-blue: #251D59;
+    --accent-blue: #007bff;
+    --price-pink: #FFC0CB;
+}
+
+body {
+    background-color: #1A1A2E;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.bg-custom {
+    background: linear-gradient(135deg, var(--dark-purple) 0%, var(--dark-blue) 100%);
+}
+
+.container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.header-content {
+    padding: 4rem 0;
+}
+
+.header-title {
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.header-title:after {
+    content: '';
+    position: absolute;
+    width: 70px;
+    height: 4px;
+    background-color: var(--light-blue);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+#crypto-name {
+    position: relative;
+    font-weight: 700;
+    color: var(--light-blue);
+    margin-bottom: 30px;
+}
+
+#crypto-name:after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 3px;
+    background-color: var(--light-blue);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+#crypto-price {
+    font-size: 2rem;
+    margin-top: 10px;
+    font-weight: bold;
+    color: var(--price-pink);
+    margin-bottom: 20px;
+}
+
+.chart-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
+canvas {
+    width: 100%;
+    height: 500px;
+    background: rgba(37, 42, 65, 0.8);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.btn-group {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.btn-group .btn {
+    background: linear-gradient(135deg, var(--medium-blue) 0%, var(--steel-blue) 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
+    margin: 0 5px;
+    transition: all 0.3s;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--steel-blue) 0%, var(--indigo) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(47, 36, 106, 0.3);
+}
+
+.btn-primary i {
+    margin-right: 8px;
+}
+
+/* Styles pour les actualités */
+.news-container {
+    margin-top: 70px;
+    margin-bottom: 50px;
+}
+
+.news-section-title {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    font-weight: 700;
+    color: var(--light-blue);
+}
+
+.news-section-title:after {
+    content: '';
+    position: absolute;
+    width: 70px;
+    height: 4px;
+    background-color: var(--light-blue);
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.news-card {
+    background: #252A41;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 25px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    height: 100%;
+}
+
+.news-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.news-image {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+    transition: transform 0.3s;
+}
+
+.news-card:hover .news-image {
+    transform: scale(1.05);
+}
+
+.news-content {
+    padding: 25px;
+}
+
+.news-date {
+    color: #a8b2c0;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.news-date i {
+    margin-right: 5px;
+}
+
+.news-title {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.news-description {
+    margin-top: 10px;
+    color: #ddd;
+    line-height: 1.6;
+}
+
+.news-link {
+    margin-top: 25px;
+}
+
+.news-link .btn {
+    background: linear-gradient(135deg, var(--medium-blue) 0%, var(--steel-blue) 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: all 0.3s;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.news-link .btn:hover {
+    background: linear-gradient(135deg, var(--steel-blue) 0%, var(--indigo) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(47, 36, 106, 0.3);
+}
+
+.news-link .btn i {
+    margin-left: 5px;
+}
+
+.loading-news {
+    text-align: center;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loading-news .spinner-border {
+    color: var(--medium-blue);
+    margin-bottom: 15px;
+}
+
+/* Header avec info de marché */
+.market-info {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 30px auto;
+    max-width: 900px;
+}
+
+.market-stat {
+    background: rgba(37, 42, 65, 0.8);
+    border-radius: 10px;
+    padding: 15px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 180px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.market-stat:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.market-stat-label {
+    color: #a8b2c0;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.market-stat-value {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: white;
+}
+
+.stat-up {
+    color: #2ecc71;
+    font-weight: 600;
+}
+
+.stat-down {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+footer {
+    margin-top: 3rem;
+}
+;

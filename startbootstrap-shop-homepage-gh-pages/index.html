@@ -10,101 +10,28 @@
         <link rel="icon" type="image/x-icon" href="assets/photo.jpeg" />
         <!-- Bootstrap icons-->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Font Awesome pour des icônes plus modernes -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
-        <style>
-            .bg-custom {
-                background-color: #20232a;
-            }
-            .card {
-                height: 100%;
-                transition: transform 0.3s;
-            }
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            }
-            .card-img-top {
-                height: 200px;
-                object-fit: contain;
-                padding: 20px;
-                background-color: #f8f9fa;
-            }
-            .price-up {
-                color: #28a745;
-            }
-            .price-down {
-                color: #dc3545;
-            }
-            #crypto-container {
-                min-height: 500px;
-            }
-            .loading-spinner {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 500px;
-            }
-            .crypto-rank {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                background-color: #343a40;
-                color: white;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-            }
-            /* Styles pour le carrousel d'actualités */
-            .news-carousel-item {
-                height: 300px;
-                background-size: cover;
-                background-position: center;
-                position: relative;
-            }
-            .news-carousel-caption {
-                background-color: rgba(0, 0, 0, 0.7);
-                bottom: 0;
-                width: 100%;
-                left: 0;
-                right: 0;
-                padding: 20px;
-            }
-            .news-date {
-                font-size: 0.8rem;
-                opacity: 0.8;
-            }
-            .carousel-control-prev, .carousel-control-next {
-                width: 5%;
-            }
-            .news-loading {
-                height: 300px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: #f8f9fa;
-                color: #20232a;
-            }
-        </style>
+        <link href="css/index-style.css" rel="stylesheet" />
     </head>
     <body>
         <!-- Header-->
         <header class="bg-custom py-5">
             <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Ethereum Curieux</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Le site des cryptos préféré de ton site des cryptos préféré</p>
+                <div class="text-center text-white header-content">
+                    <h1 class="display-4 fw-bolder header-title">Ethereum Curieux</h1>
+                    <p class="lead fw-normal text-white-50 mb-0 header-subtitle">Le site des cryptos préféré de ton site des cryptos préféré</p>
                 </div>
             </div>
         </header>
 
         <!-- Carrousel des actualités crypto -->
-        <div class="container mt-4">
-            <h2 class="text-center mb-4">Dernières actualités crypto</h2>
+        <div class="container mt-5">
+            <h2 class="section-title mb-4">Dernières actualités crypto</h2>
             <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-indicators" id="carousel-indicators">
                     <!-- Les indicateurs seront ajoutés dynamiquement -->
@@ -130,19 +57,23 @@
         <!-- Section-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
+                <h2 class="section-title mb-4">Top 100 Cryptomonnaies</h2>
                 <div id="loading" class="loading-spinner">
-                    <div class="spinner-border text-primary" role="status">
+                    <div class="spinner-border text-primary mb-3" role="status">
                         <span class="visually-hidden">Chargement...</span>
                     </div>
+                    <p>Chargement des données...</p>
                 </div>
-                <div id="crypto-container" class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                <div id="crypto-container" class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 justify-content-center">
                     <!-- Les cryptos seront ajoutées ici dynamiquement -->
                 </div>
             </div>
         </section>
         <!-- Footer-->
-        <footer class="bg-custom py-5">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Ethereum Curieux 2025</p></div>
+        <footer class="bg-custom py-4">
+            <div class="container">
+                <p class="m-0 text-center text-white footer-text">Copyright &copy; Ethereum Curieux 2025</p>
+            </div>
         </footer>
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -161,6 +92,18 @@
                 }
             }
 
+            // Fonction pour formater les grands nombres
+            function formatMarketCap(marketCap) {
+                const num = parseFloat(marketCap);
+                if (num >= 1e9) {
+                    return '$' + (num / 1e9).toFixed(2) + ' Mrd';
+                } else if (num >= 1e6) {
+                    return '$' + (num / 1e6).toFixed(2) + ' M';
+                } else {
+                    return '$' + num.toFixed(2);
+                }
+            }
+
             // Fonction pour obtenir l'URL de l'image de la crypto
             function getCryptoImageUrl(id) {
                 return `https://assets.coincap.io/assets/icons/${id.toLowerCase()}@2x.png`;
@@ -168,7 +111,7 @@
 
             // Fonction pour créer une carte de crypto
             function createCryptoCard(crypto, index) {
-                const featured = index < 3 ? '<div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">En vedette</div>' : '';
+                const featured = index < 3 ? '<div class="featured-badge"><i class="fas fa-star me-1"></i>En vedette</div>' : '';
                 const stars = 5 - Math.floor(index / 20); // Diminuer les étoiles en fonction du rang
                 const starElements = [];
                 
@@ -181,8 +124,11 @@
                 }
 
                 const priceChangeClass = parseFloat(crypto.changePercent24Hr) >= 0 ? 'price-up' : 'price-down';
-                const priceChangeSymbol = parseFloat(crypto.changePercent24Hr) >= 0 ? '↑' : '↓';
-                const priceChange = `<small class="${priceChangeClass}">${priceChangeSymbol} ${Math.abs(parseFloat(crypto.changePercent24Hr)).toFixed(2)}%</small>`;
+                const priceChangeSymbol = parseFloat(crypto.changePercent24Hr) >= 0 ? '<i class="fas fa-caret-up"></i>' : '<i class="fas fa-caret-down"></i>';
+                const priceChange = `<span class="${priceChangeClass}">${priceChangeSymbol} ${Math.abs(parseFloat(crypto.changePercent24Hr)).toFixed(2)}%</span>`;
+
+                const marketCap = formatMarketCap(crypto.marketCapUsd);
+                const volume = formatMarketCap(crypto.volumeUsd24Hr);
 
                 return `
                 <div class="col mb-5">
@@ -192,16 +138,20 @@
                         <img class="card-img-top" src="${getCryptoImageUrl(crypto.symbol)}" alt="${crypto.name}" onerror="this.src='assets/crypto-default.png';" />
                         <div class="card-body p-4">
                             <div class="text-center">
-                                <h5 class="fw-bolder">${crypto.name} (${crypto.symbol})</h5>
-                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                <h5 class="fw-bolder mb-3">${crypto.name} <span style="color: #a8b2c0;">${crypto.symbol}</span></h5>
+                                <div class="d-flex justify-content-center small text-warning mb-3">
                                     ${starElements.join('')}
                                 </div>
-                                <h3 id="${crypto.id}-price">${formatPrice(crypto.priceUsd)}</h3>
-                                <p>${priceChange}</p>
+                                <h3 id="${crypto.id}-price" class="mb-2">${formatPrice(crypto.priceUsd)}</h3>
+                                <p class="mb-3">${priceChange}</p>
+                                <div class="crypto-stats">
+                                    <span><i class="fas fa-chart-line"></i> ${marketCap}</span>
+                                    <span><i class="fas fa-exchange-alt"></i> ${volume}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="crypto.html?crypto=${crypto.id}">Détails</a></div>
+                            <div class="text-center"><a class="btn btn-details mt-auto" href="crypto.html?crypto=${crypto.id}">Détails <i class="fas fa-arrow-right"></i></a></div>
                         </div>
                     </div>
                 </div>`;
@@ -229,7 +179,7 @@
                     setInterval(updatePrices, 60000); // Mise à jour toutes les minutes
                 } catch (error) {
                     console.error('Erreur lors du chargement des cryptos:', error);
-                    document.getElementById('loading').innerHTML = '<div class="alert alert-danger">Erreur lors du chargement des données. Veuillez réessayer.</div>';
+                    document.getElementById('loading').innerHTML = '<div class="alert alert-danger" style="background-color: #3A2F62; color: #fff; border-color: #4B7DAE;">Erreur lors du chargement des données. Veuillez réessayer.</div>';
                 }
             }
 
@@ -295,11 +245,13 @@
                             // Ajouter le contenu
                             carouselItem.innerHTML = `
                                 <div class="news-carousel-item" style="background-image: url('${article.image || 'assets/news-default.jpg'}')">
-                                    <div class="news-carousel-caption">
-                                        <h5>${article.title}</h5>
-                                        <p>${article.description || 'Cliquez pour en savoir plus'}</p>
-                                        <p class="news-date">Publié le ${formattedDate}</p>
-                                        <a href="${article.url}" target="_blank" class="btn btn-primary btn-sm">Lire l'article</a>
+                                    <div class="news-overlay">
+                                        <div class="news-carousel-caption">
+                                            <h5>${article.title}</h5>
+                                            <p>${article.description || 'Cliquez pour en savoir plus'}</p>
+                                            <p class="news-date"><i class="far fa-calendar-alt"></i> Publié le ${formattedDate}</p>
+                                            <a href="${article.url}" target="_blank" class="btn btn-read">Lire l'article <i class="fas fa-external-link-alt ms-1"></i></a>
+                                        </div>
                                     </div>
                                 </div>
                             `;
@@ -308,10 +260,12 @@
                     } else {
                         document.getElementById('carousel-inner').innerHTML = `
                             <div class="carousel-item active">
-                                <div class="news-carousel-item">
-                                    <div class="news-carousel-caption">
-                                        <h5>Aucune actualité disponible</h5>
-                                        <p>Nous n'avons pas pu récupérer les dernières actualités sur les cryptomonnaies.</p>
+                                <div class="news-carousel-item" style="background-image: url('assets/news-default.jpg')">
+                                    <div class="news-overlay">
+                                        <div class="news-carousel-caption">
+                                            <h5>Aucune actualité disponible</h5>
+                                            <p>Nous n'avons pas pu récupérer les dernières actualités sur les cryptomonnaies.</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -321,10 +275,12 @@
                     console.error('Erreur lors du chargement des actualités:', error);
                     document.getElementById('carousel-inner').innerHTML = `
                         <div class="carousel-item active">
-                            <div class="news-carousel-item">
-                                <div class="news-carousel-caption">
-                                    <h5>Erreur de chargement</h5>
-                                    <p>Une erreur s'est produite lors du chargement des actualités. Veuillez réessayer ultérieurement.</p>
+                            <div class="news-carousel-item" style="background-image: url('assets/news-default.jpg')">
+                                <div class="news-overlay">
+                                    <div class="news-carousel-caption">
+                                        <h5>Erreur de chargement</h5>
+                                        <p>Une erreur s'est produite lors du chargement des actualités. Veuillez réessayer ultérieurement.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
