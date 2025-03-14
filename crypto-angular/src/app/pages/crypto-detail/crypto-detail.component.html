@@ -1,0 +1,32 @@
+<!-- Header spécifique à la crypto -->
+<div class="container">
+    <h2 id="crypto-name" *ngIf="loading">Chargement...</h2>
+    <h2 id="crypto-name" *ngIf="!loading">{{ cryptoData.name }} ({{ cryptoData.symbol }})</h2>
+    <p id="crypto-price" *ngIf="loading">Chargement...</p>
+    <p id="crypto-price" *ngIf="!loading">💰 Prix actuel : ${{ parseFloat(cryptoData.priceUsd).toFixed(2) }}</p>
+    
+    <!-- Informations de marché -->
+    <div class="market-info" *ngIf="!loading">
+      <!-- Similaire à votre original, avec les données de cryptoData -->
+    </div>
+    
+    <!-- Boutons pour choisir la période -->
+    <div class="btn-group" role="group">
+      <button class="btn" (click)="fetchCryptoHistory('m1')" [class.active]="interval === 'm1'">1 Jour</button>
+      <button class="btn" (click)="fetchCryptoHistory('m15')" [class.active]="interval === 'm15'">1 Semaine</button>
+      <button class="btn" (click)="fetchCryptoHistory('h1')" [class.active]="interval === 'h1'">1 Mois</button>
+      <button class="btn" (click)="fetchCryptoHistory('h6')" [class.active]="interval === 'h6'">6 Mois</button>
+      <button class="btn" (click)="fetchCryptoHistory('h12')" [class.active]="interval === 'h12'">1 An</button>
+    </div>
+  
+    <div class="chart-container">
+      <canvas id="cryptoChart"></canvas>
+    </div>
+    
+    <!-- Bouton de retour -->
+    <div class="back-button">
+      <a routerLink="/" class="btn btn-primary">
+        <i class="fas fa-arrow-left"></i> Retour à la liste des cryptos
+      </a>
+    </div>
+  </div>

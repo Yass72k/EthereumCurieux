@@ -1,0 +1,11 @@
+{
+    "/api": {
+      "target": "https://api.coincap.io",
+      "secure": true,
+      "pathRewrite": {
+        "^/api": "/v2"
+      },
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }

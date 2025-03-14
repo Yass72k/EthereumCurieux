@@ -1,0 +1,63 @@
+<!-- Carrousel des actualités crypto (similaire à l'original) -->
+<div class="container mt-5">
+    <h2 class="section-title mb-4">Dernières actualités crypto</h2>
+    <!-- Adaptez votre carousel ici -->
+  </div>
+  
+  <!-- Section -->
+  <section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+      <h2 class="section-title mb-4">Top 100 Cryptomonnaies</h2>
+      <div class="container mt-4">
+        <div class="d-flex align-items-center justify-content-center mb-4">
+          <img src="https://assets.coincap.io/assets/icons/btc@2x.png" alt="Bitcoin" class="me-3" style="width: 50px; height: 50px;">
+          <h1 class="m-0">Crypto Dashboard</h1>
+        </div>
+      </div>
+      <div *ngIf="loading" class="loading-spinner">
+        <div class="spinner-border text-primary mb-3" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p>Chargement des données...</p>
+      </div>
+      
+      <div *ngIf="!loading" class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 justify-content-center">
+        <div *ngFor="let crypto of cryptos; let i = index" class="col mb-5">
+          <div class="card h-100">
+            <div *ngIf="i < 3" class="featured-badge"><i class="fas fa-star me-1"></i>En vedette</div>
+            <div class="crypto-rank">{{ i + 1 }}</div>
+            <img class="card-img-top" 
+                [src]="'https://assets.coincap.io/assets/icons/' + crypto.symbol.toLowerCase() + '@2x.png'" 
+                [alt]="crypto.name" 
+                (error)="onImageError($event)" />
+            <div class="card-body p-4">
+              <div class="text-center">
+                <h5 class="fw-bolder mb-3">{{ crypto.name }} <span style="color: #a8b2c0;">{{ crypto.symbol }}</span></h5>
+                <div class="d-flex justify-content-center small text-warning mb-3">
+                  <!-- Étoiles en fonction du rang -->
+                </div>
+                <h3 class="mb-2">{{ formatPrice(crypto.priceUsd) }}</h3>
+                <p class="mb-3">
+                  <span [class]="parseFloat(crypto.changePercent24Hr) >= 0 ? 'price-up' : 'price-down'">
+                    <i [class]="parseFloat(crypto.changePercent24Hr) >= 0 ? 'fas fa-caret-up' : 'fas fa-caret-down'"></i>
+                    {{ Math.abs(parseFloat(crypto.changePercent24Hr)).toFixed(2) }}%
+                  </span>
+                </p>
+                <div class="crypto-stats">
+                  <span><i class="fas fa-chart-line"></i> {{ formatMarketCap(crypto.marketCapUsd) }}</span>
+                  <span><i class="fas fa-exchange-alt"></i> {{ formatMarketCap(crypto.volumeUsd24Hr) }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+              <div class="text-center">
+                <a class="btn btn-details mt-auto" [routerLink]="['/crypto', crypto.id]">
+                  Détails <i class="fas fa-arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

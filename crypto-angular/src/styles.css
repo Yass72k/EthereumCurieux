@@ -1,0 +1,260 @@
+/* Variables globales */
+:root {
+    --dark-purple: #2A1D62;
+    --medium-blue: #4B7DAE;
+    --light-blue: #6BDCF9;
+    --steel-blue: #4D80B2;
+    --indigo: #2F246A;
+    --navy-blue: #1F184F;
+    --dark-blue: #0F0B33;
+    --royal-blue: #251D59;
+    --accent-blue: #007bff;
+}
+
+/* Global Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #1A1A2E;
+    color: #f8f9fa;
+    line-height: 1.6;
+}
+
+/* Header Styles */
+.bg-custom {
+    background: linear-gradient(135deg, var(--dark-purple) 0%, var(--dark-blue) 100%);
+}
+
+.header-content {
+    padding: 4rem 0;
+}
+
+.header-title {
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.header-title:after {
+    content: '';
+    position: absolute;
+    width: 70px;
+    height: 4px;
+    background-color: var(--light-blue);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.header-subtitle {
+    font-weight: 300;
+    opacity: 0.8;
+    margin-top: 1.5rem;
+}
+
+/* Crypto Card Styles */
+.card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 100%;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    background-color: #252A41;
+    color: #f8f9fa;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+    height: 160px;
+    object-fit: contain;
+    padding: 25px;
+    background: linear-gradient(to bottom, #2A3050, #1e2238);
+    transition: transform 0.3s;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.price-up {
+    color: #2ecc71;
+    font-weight: 600;
+}
+
+.price-down {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.crypto-rank {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(42, 29, 98, 0.85);
+    color: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: 2px solid white;
+    z-index: 2;
+}
+
+.featured-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, var(--medium-blue) 0%, var(--light-blue) 100%);
+    color: white;
+    border-radius: 30px;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+    box-shadow: 0 3px 10px rgba(107, 220, 249, 0.3);
+}
+
+/* Button Styles */
+.btn-details {
+    background: linear-gradient(135deg, var(--medium-blue) 0%, var(--steel-blue) 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: all 0.3s;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.btn-details:hover {
+    background: linear-gradient(135deg, var(--steel-blue) 0%, var(--indigo) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(47, 36, 106, 0.3);
+}
+
+.btn-details i {
+    margin-left: 5px;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 500px;
+    color: var(--light-blue);
+}
+
+.spinner-border {
+    color: var(--medium-blue);
+}
+
+/* Section Titles */
+.section-title {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+    font-weight: 700;
+    color: var(--light-blue);
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    width: 70px;
+    height: 4px;
+    background-color: var(--light-blue);
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+/* Market Info Styles */
+.market-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    background-color: #252A41;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.market-stat {
+    text-align: center;
+    flex: 1;
+    padding: 0 15px;
+}
+
+.market-stat-label {
+    color: #a8b2c0;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.market-stat-value {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Chart Container */
+.chart-container {
+    height: 400px;
+    margin: 20px 0;
+    background-color: #252A41;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+/* Btn Group */
+.btn-group {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.btn-group .btn {
+    background-color: #252A41;
+    color: #a8b2c0;
+    border: none;
+    margin: 0 5px;
+    transition: all 0.3s;
+}
+
+.btn-group .btn.active {
+    background-color: var(--medium-blue);
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .market-info {
+        flex-direction: column;
+    }
+
+    .market-stat {
+        margin-bottom: 15px;
+    }
+}
