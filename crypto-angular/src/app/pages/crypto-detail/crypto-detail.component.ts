@@ -1,111 +1,47 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { CommonModule, DatePipe } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CryptoService, Crypto, CryptoHistoryPoint } from '../../services/crypto.service';
+import { HttpClient } from '@angular/common/http';
 import { Chart, registerables } from 'chart.js';
+import { Subscription, interval } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 Chart.register(...registerables);
+
+interface NewsArticle {
+  title: string;
+  description: string;
+  url: string;
+  image: string;
+  publishedAt: string;
+}
 
 @Component({
   selector: 'app-crypto-detail',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <header class="bg-custom py-5">
-      <div class="container px-4 px-lg-5 my-5">
-        <div class="text-center text-white header-content">
-          <h1 class="display-4 fw-bolder header-title">Historique des Cryptos</h1>
-          <p class="lead fw-normal text-white-50 mb-0">
-            Suivez l'évolution des prix en temps réel avec CoinCap API
-          </p>
-        </div>
-      </div>
-    </header>
-
-    <div class="container" *ngIf="crypto">
-      <h2 id="crypto-name">{{ crypto.name }} ({{ crypto.symbol }})</h2>
-      <p id="crypto-price">💰 Prix actuel : {{ formatPrice(crypto.priceUsd) }}</p>
-      
-      <!-- Informations de marché -->
-      <div class="market-info">
-        <div class="market-stat">
-          <div class="market-stat-label">
-            <i class="fas fa-chart-line me-1"></i> Capitalisation
-          </div>
-          <div id="market-cap" class="market-stat-value">
-            {{ formatMarketCap(crypto.marketCapUsd) }}
-          </div>
-        </div>
-        <div class="market-stat">
-          <div class="market-stat-label">
-            <i class="fas fa-exchange-alt me-1"></i> Volume (24h)
-          </div>
-          <div id="volume" class="market-stat-value">
-            {{ formatMarketCap(crypto.volumeUsd24Hr) }}
-          </div>
-        </div>
-        <div class="market-stat">
-          <div class="market-stat-label">
-            <i class="fas fa-percentage me-1"></i> Variation (24h)
-          </div>
-          <div 
-            id="percent-change" 
-            class="market-stat-value" 
-            [ngClass]="getPriceChangeClass(crypto.changePercent24Hr)"
-          >
-            <i [ngClass]="getPriceChangeIcon(crypto.changePercent24Hr)"></i>
-            {{ formatPriceChange(crypto.changePercent24Hr) }}
-          </div>
-        </div>
-        <div class="market-stat">
-          <div class="market-stat-label">
-            <i class="fas fa-sort-amount-up me-1"></i> Rang
-          </div>
-          <div id="rank" class="market-stat-value">
-            #{{ crypto.rank }}
-          </div>
-        </div>
-      </div>
-      
-      <!-- Boutons pour choisir la période -->
-      <div class="btn-group" role="group">
-        <button 
-          *ngFor="let period of periods" 
-          class="btn" 
-          [ngClass]="{'active': selectedPeriod === period.interval}"
-          (click)="fetchCryptoHistory(period.interval)"
-        >
-          {{ period.label }}
-        </button>
-      </div>
-
-      <div class="chart-container">
-        <canvas #cryptoChart></canvas>
-      </div>
-    </div>
-
-    <div *ngIf="loading" class="loading-spinner">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Chargement...</span>
-      </div>
-      <p>Chargement des données...</p>
-    </div>
-
-    <div *ngIf="error" class="alert alert-danger">
-      {{ error }}
-    </div>
-  `,
-  styleUrls: ['../../styles.css']
+  imports: [CommonModule, RouterLink, DatePipe],
+  templateUrl: './crypto-detail.component.html',
+  styleUrls: ['./crypto-detail.component.css']
 })
 export class CryptoDetailComponent implements OnInit, OnDestroy {
   @ViewChild('cryptoChart', { static: false }) cryptoChartRef!: ElementRef;
 
   cryptoId: string = '';
-  crypto: Crypto | null = null;
+  cryptoData: Crypto | null = null;
   loading = true;
   error: string | null = null;
   chart: Chart | null = null;
-  selectedPeriod = 'h1';
+  interval = 'h1';
+  
+  // Variables pour la gestion des actualités
+  news: NewsArticle[] = [];
+  loadingNews = true;
+  newsError: string | null = null;
+  
+  // Pour la mise à jour périodique
+  updateSubscription?: Subscription;
+  updateInterval = 600000; // 10 minutes en millisecondes
 
   periods = [
     { label: '1 Jour', interval: 'm1' },
@@ -117,13 +53,17 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute, 
-    private cryptoService: CryptoService
+    private cryptoService: CryptoService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.cryptoId = params.get('id') || 'bitcoin';
       this.loadCryptoDetails();
+      
+      // Configuration de la mise à jour périodique
+      this.setupPeriodicUpdates();
     });
   }
 
@@ -131,14 +71,36 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
     if (this.chart) {
       this.chart.destroy();
     }
+    
+    // Désabonnement pour éviter les fuites de mémoire
+    if (this.updateSubscription) {
+      this.updateSubscription.unsubscribe();
+    }
+  }
+
+  setupPeriodicUpdates() {
+    this.updateSubscription = interval(this.updateInterval)
+      .pipe(
+        switchMap(() => this.cryptoService.getCryptoById(this.cryptoId))
+      )
+      .subscribe({
+        next: (crypto) => {
+          this.cryptoData = crypto;
+        },
+        error: (err) => {
+          console.error('Erreur lors de la mise à jour périodique:', err);
+        }
+      });
   }
 
   loadCryptoDetails() {
     this.loading = true;
     this.cryptoService.getCryptoById(this.cryptoId).subscribe({
       next: (crypto) => {
-        this.crypto = crypto;
-        this.fetchCryptoHistory(this.selectedPeriod);
+        this.cryptoData = crypto;
+        this.fetchCryptoHistory(this.interval);
+        this.fetchCryptoNews(crypto.name, crypto.symbol);
+        this.loading = false;
       },
       error: (err) => {
         this.error = 'Erreur lors du chargement des détails de la cryptomonnaie';
@@ -149,9 +111,12 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
   }
 
   fetchCryptoHistory(interval: string) {
-    if (!this.crypto) return;
+    if (!this.cryptoData) {
+      console.warn('Impossible de charger l\'historique : pas de données crypto disponibles');
+      return;
+    }
 
-    this.selectedPeriod = interval;
+    this.interval = interval;
     this.loading = true;
 
     this.cryptoService.getCryptoHistory(this.cryptoId, interval).subscribe({
@@ -165,6 +130,31 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
         console.error(err);
       }
     });
+  }
+
+  fetchCryptoNews(name: string, symbol: string) {
+    this.loadingNews = true;
+    this.newsError = null;
+    
+    const apiKey = "d17cbf8a4455d94299d04b2dd49e19f7"; // Idéalement, cela devrait être stocké de manière sécurisée
+    const searchQuery = `${name} OR ${symbol} cryptocurrency`;
+    
+    this.http.get<any>(`https://gnews.io/api/v4/search?q=${encodeURIComponent(searchQuery)}&lang=fr&country=fr&max=6&apikey=${apiKey}`)
+      .subscribe({
+        next: (data) => {
+          if (data.articles && data.articles.length > 0) {
+            this.news = data.articles;
+          } else {
+            this.news = [];
+          }
+          this.loadingNews = false;
+        },
+        error: (err) => {
+          this.newsError = err.message || 'Erreur inconnue';
+          this.loadingNews = false;
+          console.error('Erreur lors de la récupération des actualités:', err);
+        }
+      });
   }
 
   updateChart(historyPoints: CryptoHistoryPoint[], interval: string) {
@@ -273,40 +263,56 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
   }
 
   // Méthodes utilitaires de formatage
+  parseFloat(value: string | undefined | null): number {
+    if (!value) return 0;
+    return parseFloat(value);
+  }
 
-  formatPrice(price: string): string {
+  formatPrice(price: string | undefined | null): string {
+    if (!price) return '$0.00';
+    
     const numPrice = parseFloat(price);
     if (numPrice < 0.01) {
-      return `$${numPrice.toFixed(6)}`;
+      return `${numPrice.toFixed(6)}`;
     } else if (numPrice < 1) {
-      return `$${numPrice.toFixed(4)}`;
+      return `${numPrice.toFixed(4)}`;
     } else {
-      return `$${numPrice.toFixed(2)}`;
+      return `${numPrice.toFixed(2)}`;
     }
   }
 
-  formatMarketCap(marketCap: string): string {
+  formatMarketCap(marketCap: string | undefined | null): string {
+    if (!marketCap) return '$0.00';
+    
     const num = parseFloat(marketCap);
     if (num >= 1e9) {
-      return `$${(num / 1e9).toFixed(2)} Mrd`;
+      return `${(num / 1e9).toFixed(2)} Mrd`;
     } else if (num >= 1e6) {
-      return `$${(num / 1e6).toFixed(2)} M`;
+      return `${(num / 1e6).toFixed(2)} M`;
     } else {
-      return `$${num.toFixed(2)}`;
+      return `${num.toFixed(2)}`;
     }
   }
 
-  getPriceChangeClass(change: string): string {
-    return parseFloat(change) >= 0 ? 'price-up' : 'price-down';
+  getPriceChangeClass(change: string | undefined | null): string {
+    if (!change) return 'stat-up';
+    return parseFloat(change) >= 0 ? 'stat-up' : 'stat-down';
   }
 
-  getPriceChangeIcon(change: string): string {
+  getPriceChangeIcon(change: string | undefined | null): string {
+    if (!change) return 'fas fa-caret-up';
     return parseFloat(change) >= 0 
       ? 'fas fa-caret-up' 
       : 'fas fa-caret-down';
   }
 
-  formatPriceChange(change: string): string {
+  formatPriceChange(change: string | undefined | null): string {
+    if (!change) return '0.00%';
     return `${Math.abs(parseFloat(change)).toFixed(2)}%`;
+  }
+  
+  // Gestionnaire d'erreur pour les images
+  handleImageError(event: any) {
+    event.target.src = 'assets/news-default.jpg';
   }
 }

@@ -100,6 +100,21 @@ canvas {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.loading-spinner .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    color: var(--light-blue);
+}
+
 .btn-group {
     margin-top: 20px;
     margin-bottom: 30px;
@@ -112,6 +127,25 @@ canvas {
     border-radius: 30px;
     padding: 8px 20px;
     margin: 0 5px;
+    transition: all 0.3s;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-group .btn.active {
+    background: linear-gradient(135deg, var(--steel-blue) 0%, var(--indigo) 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(47, 36, 106, 0.3);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--medium-blue) 0%, var(--steel-blue) 100%);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 20px;
     transition: all 0.3s;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -250,6 +284,17 @@ canvas {
     margin-bottom: 15px;
 }
 
+/* Indicateurs de changement de prix */
+.stat-up {
+    color: #2ecc71;
+    font-weight: 600;
+}
+
+.stat-down {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
 /* Header avec info de marché */
 .market-info {
     display: flex;
@@ -276,30 +321,3 @@ canvas {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
-
-.market-stat-label {
-    color: #a8b2c0;
-    font-size: 0.9rem;
-    margin-bottom: 8px;
-}
-
-.market-stat-value {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: white;
-}
-
-.stat-up {
-    color: #2ecc71;
-    font-weight: 600;
-}
-
-.stat-down {
-    color: #e74c3c;
-    font-weight: 600;
-}
-
-footer {
-    margin-top: 3rem;
-}
-;

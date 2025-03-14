@@ -1,32 +1,115 @@
-<!-- Header spécifique à la crypto -->
 <div class="container">
-    <h2 id="crypto-name" *ngIf="loading">Chargement...</h2>
-    <h2 id="crypto-name" *ngIf="!loading">{{ cryptoData.name }} ({{ cryptoData.symbol }})</h2>
-    <p id="crypto-price" *ngIf="loading">Chargement...</p>
-    <p id="crypto-price" *ngIf="!loading">💰 Prix actuel : ${{ parseFloat(cryptoData.priceUsd).toFixed(2) }}</p>
-    
-    <!-- Informations de marché -->
-    <div class="market-info" *ngIf="!loading">
-      <!-- Similaire à votre original, avec les données de cryptoData -->
-    </div>
-    
-    <!-- Boutons pour choisir la période -->
-    <div class="btn-group" role="group">
-      <button class="btn" (click)="fetchCryptoHistory('m1')" [class.active]="interval === 'm1'">1 Jour</button>
-      <button class="btn" (click)="fetchCryptoHistory('m15')" [class.active]="interval === 'm15'">1 Semaine</button>
-      <button class="btn" (click)="fetchCryptoHistory('h1')" [class.active]="interval === 'h1'">1 Mois</button>
-      <button class="btn" (click)="fetchCryptoHistory('h6')" [class.active]="interval === 'h6'">6 Mois</button>
-      <button class="btn" (click)="fetchCryptoHistory('h12')" [class.active]="interval === 'h12'">1 An</button>
-    </div>
+  <h2 id="crypto-name" *ngIf="loading">Chargement...</h2>
+  <h2 id="crypto-name" *ngIf="!loading">{{ cryptoData?.name }} ({{ cryptoData?.symbol }})</h2>
+  <p id="crypto-price" *ngIf="loading">Chargement...</p>
+  <p id="crypto-price" *ngIf="!loading">💰 Prix actuel : ${{ parseFloat(cryptoData?.priceUsd || '0').toFixed(2) }}</p>
   
-    <div class="chart-container">
-      <canvas id="cryptoChart"></canvas>
+  <!-- Informations de marché -->
+  <div class="market-info" *ngIf="!loading">
+    <div class="market-stat">
+      <div class="market-stat-label">
+        <i class="fas fa-chart-line me-1"></i> Capitalisation
+      </div>
+      <div id="market-cap" class="market-stat-value">
+        {{ formatMarketCap(cryptoData?.marketCapUsd || '0') }}
+      </div>
     </div>
-    
-    <!-- Bouton de retour -->
-    <div class="back-button">
-      <a routerLink="/" class="btn btn-primary">
-        <i class="fas fa-arrow-left"></i> Retour à la liste des cryptos
-      </a>
+    <div class="market-stat">
+      <div class="market-stat-label">
+        <i class="fas fa-exchange-alt me-1"></i> Volume (24h)
+      </div>
+      <div id="volume" class="market-stat-value">
+        {{ formatMarketCap(cryptoData?.volumeUsd24Hr || '0') }}
+      </div>
+    </div>
+    <div class="market-stat">
+      <div class="market-stat-label">
+        <i class="fas fa-percentage me-1"></i> Variation (24h)
+      </div>
+      <div 
+        id="percent-change" 
+        class="market-stat-value"
+        [ngClass]="getPriceChangeClass(cryptoData?.changePercent24Hr || '0')"
+      >
+        <i [ngClass]="getPriceChangeIcon(cryptoData?.changePercent24Hr || '0')"></i>
+        {{ formatPriceChange(cryptoData?.changePercent24Hr || '0') }}
+      </div>
+    </div>
+    <div class="market-stat">
+      <div class="market-stat-label">
+        <i class="fas fa-sort-amount-up me-1"></i> Rang
+      </div>
+      <div id="rank" class="market-stat-value">
+        #{{ cryptoData?.rank || '0' }}
+      </div>
     </div>
   </div>
+  
+  <!-- Boutons pour choisir la période -->
+  <div class="btn-group" role="group">
+    <button class="btn" (click)="fetchCryptoHistory('m1')" [class.active]="interval === 'm1'">1 Jour</button>
+    <button class="btn" (click)="fetchCryptoHistory('m15')" [class.active]="interval === 'm15'">1 Semaine</button>
+    <button class="btn" (click)="fetchCryptoHistory('h1')" [class.active]="interval === 'h1'">1 Mois</button>
+    <button class="btn" (click)="fetchCryptoHistory('h6')" [class.active]="interval === 'h6'">6 Mois</button>
+    <button class="btn" (click)="fetchCryptoHistory('h12')" [class.active]="interval === 'h12'">1 An</button>
+  </div>
+
+  <div class="chart-container">
+    <canvas #cryptoChart></canvas>
+  </div>
+  
+  <!-- Section des actualités spécifiques à la crypto -->
+  <div class="news-container" *ngIf="!loading">
+    <h3 class="news-section-title">Dernières actualités sur <span id="crypto-news-title">{{ cryptoData?.name }}</span></h3>
+    <div id="crypto-news" class="row">
+      <div class="col-12" *ngIf="loadingNews">
+        <div class="loading-news">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Chargement des actualités...</span>
+          </div>
+          <p>Chargement des actualités...</p>
+        </div>
+      </div>
+      
+      <ng-container *ngIf="!loadingNews && news.length > 0">
+        <div class="col-md-4" *ngFor="let article of news">
+          <div class="news-card">
+            <img [src]="article.image || 'assets/news-default.jpg'" [alt]="article.title" class="news-image" (error)="handleImageError($event)">
+            <div class="news-content">
+              <div class="news-date">
+                <i class="far fa-calendar-alt"></i> {{ article.publishedAt | date:'longDate':'fr' }}
+              </div>
+              <h4 class="news-title">{{ article.title }}</h4>
+              <p class="news-description">{{ article.description || 'Cliquez pour lire l\'article complet.' }}</p>
+              <div class="news-link">
+                <a [href]="article.url" target="_blank" class="btn btn-sm">
+                  Lire l'article <i class="fas fa-external-link-alt"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      
+      <div class="col-12" *ngIf="!loadingNews && news.length === 0">
+        <div class="alert alert-info" style="background-color: #3A2F62; color: #fff; border-color: #4B7DAE;">
+          <i class="fas fa-info-circle me-2"></i> Aucune actualité récente trouvée pour {{ cryptoData?.name }}. Consultez plus tard pour les dernières mises à jour.
+        </div>
+      </div>
+      
+      <div class="col-12" *ngIf="newsError">
+        <div class="alert alert-danger" style="background-color: #3A2F62; color: #fff; border-color: #E74C3C;">
+          <i class="fas fa-exclamation-triangle me-2"></i> Une erreur s'est produite lors du chargement des actualités: {{ newsError }}.
+          <br>Vérifiez votre clé API GNews ou la connexion internet.
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bouton de retour -->
+  <div class="back-button">
+    <a routerLink="/" class="btn btn-primary">
+      <i class="fas fa-arrow-left"></i> Retour à la liste des cryptos
+    </a>
+  </div>
+</div>
