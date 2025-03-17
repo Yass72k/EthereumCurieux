@@ -1,5 +1,10 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+// Ajouter cette interface au début du fichier, avant les imports
+interface CustomWindow extends Window {
+  bootstrap?: any;
+}
+
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CryptoService, Crypto, CryptoHistoryPoint } from '../../services/crypto.service';
 import { HttpClient } from '@angular/common/http';
@@ -7,7 +12,10 @@ import { Chart, registerables } from 'chart.js';
 import { Subscription, interval } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-Chart.register(...registerables);
+// Enregistrer les composants Chart.js seulement côté navigateur
+if (typeof window !== 'undefined') {
+  Chart.register(...registerables);
+}
 
 interface NewsArticle {
   title: string;
@@ -33,6 +41,7 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
   error: string | null = null;
   chart: Chart | null = null;
   interval = 'h1';
+  isBrowser: boolean;
   
   // Variables pour la gestion des actualités
   news: NewsArticle[] = [];
@@ -54,16 +63,21 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute, 
     private cryptoService: CryptoService,
-    private http: HttpClient
-  ) {}
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.cryptoId = params.get('id') || 'bitcoin';
       this.loadCryptoDetails();
       
-      // Configuration de la mise à jour périodique
-      this.setupPeriodicUpdates();
+      // Configuration de la mise à jour périodique uniquement côté navigateur
+      if (this.isBrowser) {
+        this.setupPeriodicUpdates();
+      }
     });
   }
 
@@ -98,8 +112,13 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
     this.cryptoService.getCryptoById(this.cryptoId).subscribe({
       next: (crypto) => {
         this.cryptoData = crypto;
-        this.fetchCryptoHistory(this.interval);
-        this.fetchCryptoNews(crypto.name, crypto.symbol);
+        
+        // Seulement dans le navigateur
+        if (this.isBrowser) {
+          this.fetchCryptoHistory(this.interval);
+          this.fetchCryptoNews(crypto.name, crypto.symbol);
+        }
+        
         this.loading = false;
       },
       error: (err) => {
@@ -111,8 +130,7 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
   }
 
   fetchCryptoHistory(interval: string) {
-    if (!this.cryptoData) {
-      console.warn('Impossible de charger l\'historique : pas de données crypto disponibles');
+    if (!this.cryptoData || !this.isBrowser) {
       return;
     }
 
@@ -133,6 +151,8 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
   }
 
   fetchCryptoNews(name: string, symbol: string) {
+    if (!this.isBrowser) return;
+    
     this.loadingNews = true;
     this.newsError = null;
     
@@ -158,6 +178,8 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
   }
 
   updateChart(historyPoints: CryptoHistoryPoint[], interval: string) {
+    if (!this.isBrowser || !this.cryptoChartRef) return;
+    
     // Détruire le graphique précédent s'il existe
     if (this.chart) {
       this.chart.destroy();
@@ -273,11 +295,11 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
     
     const numPrice = parseFloat(price);
     if (numPrice < 0.01) {
-      return `${numPrice.toFixed(6)}`;
+      return `$${numPrice.toFixed(6)}`;
     } else if (numPrice < 1) {
-      return `${numPrice.toFixed(4)}`;
+      return `$${numPrice.toFixed(4)}`;
     } else {
-      return `${numPrice.toFixed(2)}`;
+      return `$${numPrice.toFixed(2)}`;
     }
   }
 
@@ -286,11 +308,11 @@ export class CryptoDetailComponent implements OnInit, OnDestroy {
     
     const num = parseFloat(marketCap);
     if (num >= 1e9) {
-      return `${(num / 1e9).toFixed(2)} Mrd`;
+      return `$${(num / 1e9).toFixed(2)} Mrd`;
     } else if (num >= 1e6) {
-      return `${(num / 1e6).toFixed(2)} M`;
+      return `$${(num / 1e6).toFixed(2)} M`;
     } else {
-      return `${num.toFixed(2)}`;
+      return `$${num.toFixed(2)}`;
     }
   }
 
