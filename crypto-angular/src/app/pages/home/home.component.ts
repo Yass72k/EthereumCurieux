@@ -139,7 +139,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         
         // Afficher "Aujourd'hui" ou "Hier" pour une meilleure lisibilité
         const isToday = pubDate.toDateString() === now.toDateString();
-        const isYesterday = new Date(now.getDate() - 1).toDateString() === pubDate.toDateString();
+        const isYesterday = new Date(now.setDate(now.getDate() - 1)).toDateString() === pubDate.toDateString();
         
         if (isToday) {
           formattedDate = `Aujourd'hui à ${pubDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
@@ -161,11 +161,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
           description = description.substring(0, 177) + '...';
         }
         
-        // Ajouter le contenu en simplifiant la structure - CORRECTION ICI
+        // Ajouter le contenu en simplifiant la structure
         carouselItem.innerHTML = `
           <div class="news-carousel-item" style="background-image: url('${article.image || 'assets/news-default.jpg'}')">
             <div class="news-overlay">
-              <div class="news-carousel-caption">
+              <div class="news-carousel-caption" id="caption-${index}">
                 <h5>${article.title}</h5>
                 <p>${description}</p>
                 <p class="news-date"><i class="far fa-calendar-alt"></i> Publié le ${formattedDate}</p>
@@ -177,6 +177,65 @@ export class HomeComponent implements OnInit, AfterViewInit {
           </div>
         `;
         carouselInner.appendChild(carouselItem);
+        
+        // Adapter la couleur du texte en fonction de l'image
+        if (article.image) {
+          const img = new Image();
+          img.crossOrigin = "Anonymous";
+          img.src = article.image;
+          
+          img.onload = () => {
+            try {
+              // Créer un canvas pour extraire la couleur dominante
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              if (!context) {
+                console.error('Impossible de récupérer le contexte 2D du canvas');
+                return;
+              }
+              const width = 50;  // Taille réduite pour la performance
+              const height = 50;
+              
+              canvas.width = width;
+              canvas.height = height;
+              
+              context.drawImage(img, 0, 0, width, height);
+              
+              // Extraire les données de pixels
+              const imgData = context.getImageData(0, 0, width, height);
+              const pixelData = imgData.data;
+              
+              // Calculer la luminosité moyenne
+              let totalR = 0, totalG = 0, totalB = 0;
+              for (let i = 0; i < pixelData.length; i += 4) {
+                totalR += pixelData[i];
+                totalG += pixelData[i+1];
+                totalB += pixelData[i+2];
+              }
+              
+              const pixelCount = pixelData.length / 4;
+              const avgR = totalR / pixelCount;
+              const avgG = totalG / pixelCount;
+              const avgB = totalB / pixelCount;
+              
+              // Calculer la luminosité
+              const luminance = 0.299 * avgR + 0.587 * avgG + 0.114 * avgB;
+              
+              // Appliquer la couleur de texte
+              const caption = document.getElementById(`caption-${index}`);
+              if (caption) {
+                caption.style.color = luminance < 128 ? 'white' : 'black';
+              }
+            } catch (error) {
+              console.error('Erreur lors de l\'analyse des couleurs:', error);
+            }
+          };
+          
+          img.onerror = () => {
+            console.error('Erreur lors du chargement de l\'image pour analyse des couleurs');
+            // En cas d'erreur, garder la couleur de texte par défaut
+          };
+        }
       });
       
       // Réinitialiser le carrousel

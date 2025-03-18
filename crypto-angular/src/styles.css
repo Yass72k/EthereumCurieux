@@ -63,6 +63,7 @@ body {
 .news-carousel-item {
     height: 500px;
     width: 1300px;
+    background-size: cover;
 }
 
 /* Crypto Card Styles */
