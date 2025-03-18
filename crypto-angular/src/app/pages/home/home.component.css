@@ -234,8 +234,10 @@ footer {
     position: relative;
   }
   
+
   .news-carousel-item {
-    height: 500px; /* Augmentation de la hauteur */
+    height: 1000px; /* Augmentation de la hauteur */
+    width: 1000px;
     background-size: cover;
     background-position: center;
     position: relative;

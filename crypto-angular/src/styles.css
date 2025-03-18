@@ -60,6 +60,11 @@ body {
     margin-top: 1.5rem;
 }
 
+.news-carousel-item {
+    height: 500px;
+    width: 1300px;
+}
+
 /* Crypto Card Styles */
 .card {
     border: none;
