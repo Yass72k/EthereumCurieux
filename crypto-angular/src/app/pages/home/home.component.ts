@@ -1,12 +1,12 @@
-// Ajouter cette interface au début du fichier, avant les imports
-interface CustomWindow extends Window {
-  bootstrap?: any;
-}
-
 import { Component, OnInit, AfterViewInit, PLATFORM_ID, Inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CryptoService } from '../../services/crypto.service';
+import { CryptoService, Crypto } from '../../services/crypto.service';
+
+// Interface pour Window avec Bootstrap
+interface CustomWindow extends Window {
+  bootstrap?: any;
+}
 
 @Component({
   selector: 'app-home',
@@ -20,8 +20,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   loading = true;
   newsLoading = true;
   
-  cryptoList: any[] = [];
+  cryptoList: Crypto[] = [];
   cryptoNews: any[] = [];
+  newsCarousel: any;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -39,11 +40,30 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // N'exécuter les scripts que dans le navigateur
+    // Initialiser le carrousel après le rendu des composants
     if (this.isBrowser) {
       setTimeout(() => {
-        this.initializeCarousel();
-      }, 500);
+        const customWindow = window as unknown as CustomWindow;
+        if (customWindow.bootstrap) {
+          const carouselElement = document.getElementById('newsCarousel');
+          if (carouselElement) {
+            this.newsCarousel = new customWindow.bootstrap.Carousel(carouselElement, {
+              interval: 7000,  // Plus de temps pour lire
+              wrap: true,
+              pause: 'hover'  // Pause au survol
+            });
+            
+            // Ajouter l'écouteur d'événements pour arrêter le défilement au survol
+            carouselElement.addEventListener('mouseenter', () => {
+              this.newsCarousel.pause();
+            });
+            
+            carouselElement.addEventListener('mouseleave', () => {
+              this.newsCarousel.cycle();
+            });
+          }
+        }
+      }, 1000);
     }
   }
 
@@ -65,20 +85,140 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   loadCryptoNews(): void {
     this.newsLoading = true;
-    this.cryptoService.getCryptoNews().subscribe({
-      next: (articles) => {
-        this.cryptoNews = articles;
-        this.newsLoading = false;
-        this.updateNewsUI();
+    this.cryptoService.getCryptoNews('cryptocurrency OR bitcoin OR ethereum', 5).subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          this.cryptoNews = data;
+          this.newsLoading = false;
+          this.updateNewsCarousel();
+        } else {
+          this.showNewsError('Aucune actualité disponible');
+        }
       },
       error: (error) => {
         console.error('Erreur lors du chargement des actualités:', error);
-        this.newsLoading = false;
-        this.showNewsLoadingError();
+        this.showNewsError('Erreur de chargement');
       }
     });
   }
 
+  updateNewsCarousel(): void {
+    if (!this.isBrowser) return;
+    
+    const carouselInner = document.getElementById('carousel-inner');
+    const carouselIndicators = document.getElementById('carousel-indicators');
+    
+    if (carouselInner && carouselIndicators) {
+      // Vider le carrousel
+      carouselInner.innerHTML = '';
+      carouselIndicators.innerHTML = '';
+      
+      // Ajouter chaque article au carrousel
+      this.cryptoNews.forEach((article, index) => {
+        // Créer l'indicateur
+        const indicator = document.createElement('button');
+        indicator.setAttribute('type', 'button');
+        indicator.setAttribute('data-bs-target', '#newsCarousel');
+        indicator.setAttribute('data-bs-slide-to', index.toString());
+        indicator.setAttribute('aria-label', `Article ${index + 1}`);
+        if (index === 0) {
+          indicator.classList.add('active');
+          indicator.setAttribute('aria-current', 'true');
+        }
+        carouselIndicators.appendChild(indicator);
+        
+        // Créer l'élément du carrousel
+        const carouselItem = document.createElement('div');
+        carouselItem.classList.add('carousel-item');
+        if (index === 0) carouselItem.classList.add('active');
+        
+        // Formater la date de manière plus lisible
+        const pubDate = new Date(article.publishedAt);
+        const now = new Date();
+        let formattedDate;
+        
+        // Afficher "Aujourd'hui" ou "Hier" pour une meilleure lisibilité
+        const isToday = pubDate.toDateString() === now.toDateString();
+        const isYesterday = new Date(now.getDate() - 1).toDateString() === pubDate.toDateString();
+        
+        if (isToday) {
+          formattedDate = `Aujourd'hui à ${pubDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+        } else if (isYesterday) {
+          formattedDate = `Hier à ${pubDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+        } else {
+          formattedDate = pubDate.toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        }
+        
+        // Améliorer la description pour une meilleure lisibilité
+        let description = article.description || 'Cliquez pour en savoir plus';
+        if (description.length > 180) {
+          description = description.substring(0, 177) + '...';
+        }
+        
+        // Ajouter le contenu en simplifiant la structure - CORRECTION ICI
+        carouselItem.innerHTML = `
+          <div class="news-carousel-item" style="background-image: url('${article.image || 'assets/news-default.jpg'}')">
+            <div class="news-overlay">
+              <div class="news-carousel-caption">
+                <h5>${article.title}</h5>
+                <p>${description}</p>
+                <p class="news-date"><i class="far fa-calendar-alt"></i> Publié le ${formattedDate}</p>
+                <a href="${article.url}" target="_blank" class="btn btn-read">
+                  Lire l'article <i class="fas fa-external-link-alt ms-2"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+        carouselInner.appendChild(carouselItem);
+      });
+      
+      // Réinitialiser le carrousel
+      const customWindow = window as unknown as CustomWindow;
+      if (customWindow.bootstrap && carouselInner.children.length > 0) {
+        const carouselElement = document.getElementById('newsCarousel');
+        if (carouselElement) {
+          this.newsCarousel = new customWindow.bootstrap.Carousel(carouselElement, {
+            interval: 7000,
+            wrap: true,
+            pause: 'hover'
+          });
+        }
+      }
+    }
+  }
+
+  showNewsError(message: string): void {
+    if (!this.isBrowser) return;
+    
+    const carouselInner = document.getElementById('carousel-inner');
+    if (carouselInner) {
+      carouselInner.innerHTML = `
+        <div class="carousel-item active">
+          <div class="news-carousel-item" style="background-image: linear-gradient(135deg, #252A41 0%, #1A1A2E 100%)">
+            <div class="news-overlay" style="background: rgba(42, 29, 98, 0.3)">
+              <div class="news-carousel-caption text-center">
+                <i class="fas fa-exclamation-circle fa-3x mb-4" style="color: var(--light-blue)"></i>
+                <h5>${message}</h5>
+                <p>Nous n'avons pas pu récupérer les dernières actualités sur les cryptomonnaies.</p>
+                <button class="btn btn-read mt-4" onclick="window.location.reload()">
+                  <i class="fas fa-sync-alt me-2"></i> Actualiser la page
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    this.newsLoading = false;
+  }
+  
   // Mettre à jour l'interface utilisateur avec les données de crypto
   updateUI(): void {
     if (!this.isBrowser) return;
@@ -102,83 +242,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     // Mettre à jour les prix périodiquement
     setInterval(() => this.updatePrices(), 60000); // Mise à jour toutes les minutes
-  }
-
-  // Mettre à jour l'interface utilisateur avec les actualités
-  updateNewsUI(): void {
-    if (!this.isBrowser) return;
-    
-    // Vérifier si des articles ont été trouvés
-    if (this.cryptoNews && this.cryptoNews.length > 0) {
-      const carouselInner = document.getElementById('carousel-inner');
-      const carouselIndicators = document.getElementById('carousel-indicators');
-      
-      if (carouselInner && carouselIndicators) {
-        // Vider le carrousel
-        carouselInner.innerHTML = '';
-        carouselIndicators.innerHTML = '';
-        
-        // Ajouter chaque article au carrousel
-        this.cryptoNews.forEach((article, index) => {
-          // Créer l'indicateur
-          const indicator = document.createElement('button');
-          indicator.setAttribute('type', 'button');
-          indicator.setAttribute('data-bs-target', '#newsCarousel');
-          indicator.setAttribute('data-bs-slide-to', index.toString());
-          if (index === 0) indicator.classList.add('active');
-          carouselIndicators.appendChild(indicator);
-          
-          // Créer l'élément du carrousel
-          const carouselItem = document.createElement('div');
-          carouselItem.classList.add('carousel-item');
-          if (index === 0) carouselItem.classList.add('active');
-          
-          // Formater la date
-          const pubDate = new Date(article.publishedAt);
-          const formattedDate = pubDate.toLocaleDateString('fr-FR', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-          });
-          
-          // Ajouter le contenu
-          carouselItem.innerHTML = `
-              <div class="news-carousel-item" style="background-image: url('${article.image || 'assets/news-default.jpg'}')">
-                  <div class="news-overlay">
-                      <div class="news-carousel-caption">
-                          <h5>${article.title}</h5>
-                          <p>${article.description || 'Cliquez pour en savoir plus'}</p>
-                          <p class="news-date"><i class="far fa-calendar-alt"></i> Publié le ${formattedDate}</p>
-                          <a href="${article.url}" target="_blank" class="btn btn-read">Lire l'article <i class="fas fa-external-link-alt ms-1"></i></a>
-                      </div>
-                  </div>
-              </div>
-          `;
-          carouselInner.appendChild(carouselItem);
-        });
-      }
-      
-      // Réinitialiser le carrousel
-      this.initializeCarousel();
-    } else {
-      this.showNoNewsAvailable();
-    }
-  }
-
-  // Initialiser le carrousel Bootstrap
-  initializeCarousel(): void {
-    if (this.isBrowser) {
-      // Utiliser cast pour accéder à bootstrap
-      const customWindow = window as CustomWindow;
-      if (customWindow.bootstrap) {
-        const carousel = new customWindow.bootstrap.Carousel(document.getElementById('newsCarousel'), {
-          interval: 5000,
-          wrap: true
-        });
-      }
-    }
   }
 
   // Mettre à jour les prix des cryptos
@@ -215,51 +278,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Afficher une erreur lors du chargement des actualités
-  showNewsLoadingError(): void {
-    if (!this.isBrowser) return;
-    
-    const carouselInner = document.getElementById('carousel-inner');
-    if (carouselInner) {
-      carouselInner.innerHTML = `
-        <div class="carousel-item active">
-            <div class="news-carousel-item" style="background-image: url('assets/news-default.jpg')">
-                <div class="news-overlay">
-                    <div class="news-carousel-caption">
-                        <h5>Erreur de chargement</h5>
-                        <p>Une erreur s'est produite lors du chargement des actualités. Veuillez réessayer ultérieurement.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-      `;
-    }
-  }
-
-  // Afficher un message quand aucune actualité n'est disponible
-  showNoNewsAvailable(): void {
-    if (!this.isBrowser) return;
-    
-    const carouselInner = document.getElementById('carousel-inner');
-    if (carouselInner) {
-      carouselInner.innerHTML = `
-        <div class="carousel-item active">
-            <div class="news-carousel-item" style="background-image: url('assets/news-default.jpg')">
-                <div class="news-overlay">
-                    <div class="news-carousel-caption">
-                        <h5>Aucune actualité disponible</h5>
-                        <p>Nous n'avons pas pu récupérer les dernières actualités sur les cryptomonnaies.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-      `;
-    }
-  }
-
-  // Le reste du code reste inchangé...
   // Fonction pour créer une carte de crypto
-  createCryptoCard(crypto: any, index: number): string {
+  createCryptoCard(crypto: Crypto, index: number): string {
     const featured = index < 3 ? '<div class="featured-badge"><i class="fas fa-star me-1"></i>En vedette</div>' : '';
     const stars = 5 - Math.floor(index / 20); // Diminuer les étoiles en fonction du rang
     const starElements: string[] = [];
@@ -300,7 +320,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 </div>
             </div>
             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                <div class="text-center"><a class="btn btn-details mt-auto" href="../crypto-detail/${crypto.id}">Détails <i class="fas fa-arrow-right"></i></a></div>
+                <div class="text-center"><a class="btn btn-details mt-auto" href="/crypto/${crypto.id}">Détails <i class="fas fa-arrow-right"></i></a></div>
             </div>
         </div>
     </div>`;
