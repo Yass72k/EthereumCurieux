@@ -9,9 +9,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 
-// Solution pour l'erreur MaxListenersExceededWarning
 if (typeof process !== 'undefined' && process.setMaxListeners) {
-  // Augmenter la limite à 20 ou plus selon les besoins
   process.setMaxListeners(20);
 }
 
@@ -26,17 +24,14 @@ export class ErrorInterceptor implements HttpInterceptor {
     
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Vérifier si c'est une erreur de timeout (méthode compatible avec TypeScript)
         if (error instanceof HttpErrorResponse && error.message && error.message.includes('timeout')) {
           console.warn(`La requête vers ${request.url} a expiré.`);
         }
         
-        // Gérer les erreurs de connexion
         if (error.error instanceof Error) {
           console.error('Erreur de connexion:', error.error.message);
         }
         
-        // Gérer les erreurs de serveur
         if (error.status >= 500) {
           console.error('Erreur serveur:', error.message);
         }
@@ -45,9 +40,8 @@ export class ErrorInterceptor implements HttpInterceptor {
       }),
       finalize(() => {
         this.activeRequests--;
-        // Libérer les ressources si c'est la dernière requête active
         if (this.activeRequests === 0) {
-          // Ici, on pourrait libérer des ressources si nécessaire
+          
         }
       })
     );
